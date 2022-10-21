@@ -15,7 +15,7 @@ router.post('/', async(req, res) =>{
     const genre = await Genre.findById(req.body.genreId);
     if (!genre) return res.status(404).send('The genre with given ID was not found.');
 
-    let clothe = new Clothe({
+    const clothe = new Clothe({
         name: req.body.name,
         genre: {
             _id: genre._id,
@@ -23,7 +23,7 @@ router.post('/', async(req, res) =>{
         },
         numberInStock: req.body.numberInStock
     });
-    clothe = await clothe.save(); // test xong xem co can dung let de gan ntn khong?
+    await clothe.save(); 
     res.send(clothe);
 });
 
@@ -38,10 +38,7 @@ router.put('/:id', async(req, res) => {
         req.params.id,
         {
             name: req.body.name,
-            genre: {
-                _id: genre._id,
-               // name: genre.name
-            },
+            genre: { _id: genre._id },
             numberInStock: req.body.numberInStock
         },
         { new: true }
@@ -67,7 +64,5 @@ router.get('/', async(req, res) => {
 
     res.send(clothe);
 });
-
-
 
 module.exports = router;

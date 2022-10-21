@@ -19,7 +19,6 @@ const clotheSchema =  new mongoose.Schema({
         min: 0,
         require: true
     }
-
 });
 const Clothe = mongoose.model('Clothe', clotheSchema);
 

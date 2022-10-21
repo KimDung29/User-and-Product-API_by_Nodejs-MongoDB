@@ -1,7 +1,7 @@
 const { Purchase, validatePurchase } = require('../models/purchase');
 const { Customer } = require('../models/customer');
 const { Clothe } = require('../models/clothe');
-const lodash = require('lodash');
+// const _ = require('lodash');
 
 const express = require('express');
 const router = express.Router();
@@ -15,30 +15,21 @@ router.post('/', async(req, res) => {
     const {error} =  validatePurchase(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    const customer = await Customer.findById(req.body.cusomerId);
-    if (customer) return res.status(404).send('The customer with given ID was not found.');
+    const customer = await Customer.findById(req.body.customerId);
+    if (!customer) return res.status(404).send('The customer with given ID was not found.');
 
     const clothe = await Clothe.findById(req.body.clotheId);
     if (!clothe) return res.status(400).send('The clothe with given ID was not found.');
 
     if (clothe.numberInStock === 0 ) return res.send('The clothe not in stock.');
 
-    let purchase = new Purchase({
-        customer: {
-            _id: customer._id
-            // name: req.body.name,
-            // phone: req.body.phone,
-            // email: req.body.email
-        },
-        clothe: {
-            _id: clothe._id
-            // name: req.body.name,
-            // genre: req.body.genre
-        },
+    const purchase = new Purchase({
+        customer,
+        clothe,
         numberInStock: req.body.numberInStock,
         price: req.body.price
     });
-    purchase = await purchase.save();
+    await purchase.save();
     res.send(purchase);
 });
 
